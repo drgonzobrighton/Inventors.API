@@ -1,18 +1,13 @@
-using Inventors.API.Data;
+﻿using Inventors.API.Data;
+using Inventors.API.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Inventors.API
 {
@@ -40,6 +35,8 @@ namespace Inventors.API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Inventors", Version = "v1" });
             });
+
+            services.AddScoped<IInventorService, InventorService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

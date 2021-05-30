@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Inventors.API.Domain;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Inventors.API.Data
 {
@@ -12,5 +10,7 @@ namespace Inventors.API.Data
             : base(options)
         {
         }
+
+        public DbSet<Inventor> Inventors { get; set; }
     }
 }
