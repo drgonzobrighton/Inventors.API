@@ -48,10 +48,7 @@ namespace Inventors.API.V1.Controllers
         [HttpPost(ApiRoutes.Inventors.Create)]
         public async Task<IActionResult> CreateInventor([FromBody] InventorRequest request)
         {
-            if (!request.IsValid(out var errorMessages))
-            {
-                return BadRequest(errorMessages);
-            }
+
             var inventor = new Inventor
             {
                 FirstName = request.FirstName,
@@ -76,10 +73,6 @@ namespace Inventors.API.V1.Controllers
         [HttpPut(ApiRoutes.Inventors.Update)]
         public async Task<IActionResult> UpdateInventor([FromRoute] long id, [FromBody] InventorRequest request)
         {
-            if (!request.IsValid(out var errorMessages))
-            {
-                return BadRequest(errorMessages);
-            }
 
             var inventor = await _inventorService.GetInventorByIdAsync(id);
 
