@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace Inventors.API.V1.Controllers
 {
-    [ApiController]
     public class InventorsController : ControllerBase
     {
 
