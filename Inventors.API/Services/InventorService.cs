@@ -15,9 +15,9 @@ namespace Inventors.API.Services
             _context = context;
         }
 
-        public async Task<bool> Create(Inventor inventor)
+        public async Task<bool> CreateInventor(Inventor inventor)
         {
-            _context.Inventors.Add(inventor);
+            await _context.Inventors.AddAsync(inventor);
             var result = await _context.SaveChangesAsync();
             return result > 0;
         }
@@ -30,6 +30,26 @@ namespace Inventors.API.Services
         public async Task<List<Inventor>> GetInventorsAsync()
         {
             return await _context.Inventors.ToListAsync();
+        }
+
+        public async Task<bool> UpdateInventor(Inventor inventor)
+        {
+            _context.Inventors.Update(inventor);
+            var result = await _context.SaveChangesAsync();
+            return result > 0;
+        }
+
+        public async Task<bool> DeleteInventor(long id)
+        {
+            var inventorToDelete = await GetInventorByIdAsync(id);
+
+            if (inventorToDelete == null)
+            {
+                return false;
+            }
+            _context.Inventors.Remove(inventorToDelete);
+            var result = await _context.SaveChangesAsync();
+            return result > 0;
         }
     }
 }

@@ -10,6 +10,10 @@ namespace Inventors.API.Services
 
         Task<Inventor> GetInventorByIdAsync(long id);
 
-        Task<bool> Create(Inventor inventor);
+        Task<bool> CreateInventor(Inventor inventor);
+
+        Task<bool> UpdateInventor(Inventor inventor);
+
+        Task<bool> DeleteInventor(long id);
     }
 }

@@ -59,9 +59,9 @@ namespace Inventors.API.V1.Controllers
                 LastName = request.LastName
             };
 
-            var success = await _inventorService.Create(inventor);
+            var created = await _inventorService.CreateInventor(inventor);
 
-            if (!success)
+            if (!created)
             {
                 return BadRequest("Something went wrong");
             }
@@ -72,6 +72,48 @@ namespace Inventors.API.V1.Controllers
             var inventorResponse = _mapper.Map<Inventor, InventorResponse>(inventor);
 
             return Created(locationUrl, inventorResponse);
+        }
+
+        [HttpPut(ApiRoutes.Inventors.Update)]
+        public async Task<IActionResult> UpdateInventor([FromRoute] long id, [FromBody] InventorRequest request)
+        {
+            if (!request.IsValid(out var errorMessages))
+            {
+                return BadRequest(errorMessages);
+            }
+
+            var inventor = await _inventorService.GetInventorByIdAsync(id);
+
+            if (inventor == null)
+            {
+                return NotFound();
+            }
+
+            inventor = _mapper.Map<InventorRequest, Inventor>(request, inventor);
+
+            var updated = await _inventorService.UpdateInventor(inventor);
+
+            if (!updated)
+            {
+                return BadRequest("Something went wrong");
+            }
+
+            var inventorResponse = _mapper.Map<Inventor, InventorResponse>(inventor);
+
+            return Ok(inventorResponse);
+        }
+
+        [HttpDelete(ApiRoutes.Inventors.Delete)]
+        public async Task<IActionResult> DeleteInventor([FromRoute] long id)
+        {
+            var deleted = await _inventorService.DeleteInventor(id);
+
+            if (deleted)
+            {
+                return NoContent();
+            }
+
+            return NotFound();
         }
     }
 }
