@@ -46,8 +46,12 @@ namespace Inventors.API.V1.Controllers
         }
 
         [HttpPost(ApiRoutes.Inventors.Create)]
-        public async Task<IActionResult> GetInventor([FromBody] InventorRequest request)
+        public async Task<IActionResult> CreateInventor([FromBody] CreateInventorRequest request)
         {
+            if (!request.IsValid(out var errorMessages))
+            {
+                return BadRequest(new ApiResponse<Inventor>(errorMessages));
+            }
             var inventor = new Inventor
             {
                 FirstName = request.FirstName,
@@ -60,7 +64,10 @@ namespace Inventors.API.V1.Controllers
             {
                 return BadRequest(new ApiResponse<Inventor>(new List<string>() { "Something went wrong" }));
             }
-            return Created("", new ApiResponse<Inventor>(inventor));
+
+            var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
+            var locationUrl = baseUrl + "/" + ApiRoutes.Inventors.Get.Replace("{id}", inventor.Id.ToString());
+            return Created(locationUrl, new ApiResponse<Inventor>(inventor));
         }
     }
 }
