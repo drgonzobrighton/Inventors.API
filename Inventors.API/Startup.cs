@@ -36,6 +36,8 @@ namespace Inventors.API
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Inventors", Version = "v1" });
             });
 
+            services.AddAutoMapper(typeof(Startup));
+
             services.AddScoped<IInventorService, InventorService>();
         }
 

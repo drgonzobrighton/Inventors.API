@@ -1,4 +1,5 @@
-﻿using Inventors.API.Contracts.V1.Requests;
+﻿using AutoMapper;
+using Inventors.API.Contracts.V1.Requests;
 using Inventors.API.Contracts.V1.Responses;
 using Inventors.API.Domain;
 using Inventors.API.Services;
@@ -14,16 +15,20 @@ namespace Inventors.API.V1.Controllers
     {
 
         private readonly IInventorService _inventorService;
+        private readonly IMapper _mapper;
 
-        public InventorsController(IInventorService inventorService)
+        public InventorsController(IInventorService inventorService, IMapper mapper)
         {
             _inventorService = inventorService;
+            _mapper = mapper;
         }
 
         [HttpGet(ApiRoutes.Inventors.GetAll)]
         public async Task<IActionResult> GetAllAsync()
         {
-            return Ok(await _inventorService.GetInventorsAsync());
+            var inventors = await _inventorService.GetInventorsAsync();
+            var result = _mapper.Map<IEnumerable<Inventor>, IEnumerable<InventorResponse>>(inventors);
+            return Ok(result);
         }
 
         [HttpGet(ApiRoutes.Inventors.Get)]
@@ -36,21 +41,17 @@ namespace Inventors.API.V1.Controllers
                 return NotFound();
             }
 
-            var inventorResponse = new InventorResponse
-            {
-                FirstName = inventor.FirstName,
-                LastName = inventor.LastName
-            };
+            var inventorResponse = _mapper.Map<Inventor, InventorResponse>(inventor);
 
             return Ok(inventorResponse);
         }
 
         [HttpPost(ApiRoutes.Inventors.Create)]
-        public async Task<IActionResult> CreateInventor([FromBody] CreateInventorRequest request)
+        public async Task<IActionResult> CreateInventor([FromBody] InventorRequest request)
         {
             if (!request.IsValid(out var errorMessages))
             {
-                return BadRequest(new ApiResponse<Inventor>(errorMessages));
+                return BadRequest(errorMessages);
             }
             var inventor = new Inventor
             {
@@ -62,12 +63,15 @@ namespace Inventors.API.V1.Controllers
 
             if (!success)
             {
-                return BadRequest(new ApiResponse<Inventor>(new List<string>() { "Something went wrong" }));
+                return BadRequest("Something went wrong");
             }
 
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
             var locationUrl = baseUrl + "/" + ApiRoutes.Inventors.Get.Replace("{id}", inventor.Id.ToString());
-            return Created(locationUrl, new ApiResponse<Inventor>(inventor));
+
+            var inventorResponse = _mapper.Map<Inventor, InventorResponse>(inventor);
+
+            return Created(locationUrl, inventorResponse);
         }
     }
 }

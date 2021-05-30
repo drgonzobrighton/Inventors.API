@@ -2,7 +2,7 @@
 
 namespace Inventors.API.Contracts.V1.Requests
 {
-    public class CreateInventorRequest : BaseRequest
+    public class InventorRequest : BaseRequest
     {
 
         public string FirstName { get; set; }
