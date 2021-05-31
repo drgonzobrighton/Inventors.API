@@ -1,4 +1,5 @@
-﻿using Inventors.API.Domain;
+﻿using Inventors.API.Data.Models;
+using Inventors.API.Domain.EntityValidators;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -10,9 +11,9 @@ namespace Inventors.API.Services
 
         Task<Inventor> GetInventorByIdAsync(long id);
 
-        Task<bool> CreateInventor(Inventor inventor);
+        Task<InventorValidationResponse> CreateInventor(Inventor inventor);
 
-        Task<bool> UpdateInventor(Inventor inventor);
+        Task<InventorValidationResponse> UpdateInventor(Inventor inventor);
 
         Task<bool> DeleteInventor(long id);
     }

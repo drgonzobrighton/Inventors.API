@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Inventors.API.Contracts.V1.Requests;
 using Inventors.API.Contracts.V1.Responses;
-using Inventors.API.Domain;
+using Inventors.API.Data.Models;
 using Inventors.API.Services;
 using Inventors.API.V1.Contracts;
 using Microsoft.AspNetCore.Mvc;
@@ -49,17 +49,13 @@ namespace Inventors.API.V1.Controllers
         public async Task<IActionResult> CreateInventor([FromBody] InventorRequest request)
         {
 
-            var inventor = new Inventor
-            {
-                FirstName = request.FirstName,
-                LastName = request.LastName
-            };
+            var inventor = _mapper.Map<Inventor>(request);
 
-            var created = await _inventorService.CreateInventor(inventor);
+            var creationResult = await _inventorService.CreateInventor(inventor);
 
-            if (!created)
+            if (!creationResult.Success)
             {
-                return BadRequest("Something went wrong");
+                return BadRequest(new { Errors = creationResult.Messages });
             }
 
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
@@ -83,11 +79,11 @@ namespace Inventors.API.V1.Controllers
 
             inventor = _mapper.Map<InventorRequest, Inventor>(request, inventor);
 
-            var updated = await _inventorService.UpdateInventor(inventor);
+            var updatedResult = await _inventorService.UpdateInventor(inventor);
 
-            if (!updated)
+            if (!updatedResult.Success)
             {
-                return BadRequest("Something went wrong");
+                return BadRequest(new { Errors = updatedResult.Messages });
             }
 
             var inventorResponse = _mapper.Map<Inventor, InventorResponse>(inventor);

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Inventors.API.Contracts.V1.Requests;
 using Inventors.API.Contracts.V1.Responses;
-using Inventors.API.Domain;
+using Inventors.API.Data.Models;
 
 namespace Inventors.API.Mapping
 {

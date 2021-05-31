@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Inventors.API.Domain
+namespace Inventors.API.Data.Models
 {
-    public class Inventor : IEntity
+    public class Inventor
     {
         [Key]
         public long Id { get; set; }

@@ -1,5 +1,6 @@
 ﻿using Inventors.API.Data;
-using Inventors.API.Domain;
+using Inventors.API.Data.Models;
+using Inventors.API.Domain.EntityValidators;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,12 +16,7 @@ namespace Inventors.API.Services
             _context = context;
         }
 
-        public async Task<bool> CreateInventor(Inventor inventor)
-        {
-            await _context.Inventors.AddAsync(inventor);
-            var result = await _context.SaveChangesAsync();
-            return result > 0;
-        }
+
 
         public async Task<Inventor> GetInventorByIdAsync(long id)
         {
@@ -32,11 +28,48 @@ namespace Inventors.API.Services
             return await _context.Inventors.ToListAsync();
         }
 
-        public async Task<bool> UpdateInventor(Inventor inventor)
+        public async Task<InventorValidationResponse> CreateInventor(Inventor inventor)
         {
+            var result = new InventorValidationResponse();
+
+            if (!InventorValidator.ValidateInventor(inventor, _context, out var messages))
+            {
+                result.Messages.AddRange(messages);
+                return result;
+            }
+
+            await _context.Inventors.AddAsync(inventor);
+            var saveResult = await _context.SaveChangesAsync();
+
+            if (saveResult > 0)
+            {
+                result.Success = true;
+                return result;
+            }
+
+            result.Messages.Add("Something went wrong, please try again");
+            return result;
+        }
+
+        public async Task<InventorValidationResponse> UpdateInventor(Inventor inventor)
+        {
+            var result = new InventorValidationResponse();
+
+            if (!InventorValidator.ValidateInventor(inventor, _context, out var messages))
+            {
+                result.Messages.AddRange(messages);
+                return result;
+            }
             _context.Inventors.Update(inventor);
-            var result = await _context.SaveChangesAsync();
-            return result > 0;
+            var saveResult = await _context.SaveChangesAsync();
+            if (saveResult > 0)
+            {
+                result.Success = true;
+                return result;
+            }
+
+            result.Messages.Add("Something went wrong, please try again");
+            return result;
         }
 
         public async Task<bool> DeleteInventor(long id)
